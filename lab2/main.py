@@ -7,7 +7,7 @@ import dlib
 predictor = dlib.shape_predictor("shape_predictor_68_face_landmarks.dat")
 
 # Загрузка изображения
-image = cv2.imread('image2.jpg')
+image = cv2.imread('17.jpg')
 gray_image = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
 
 
@@ -60,13 +60,20 @@ for face in faces:
     center_left = (x_left + w_left // 2, y_left + h_left // 2)
     
     # Сравнить центр глаза с центром области интереса
-    if left_x_min + center_left[0] <= left_x_min + 0.4 * (left_x_max - left_x_min): 
-        print("Направление левого глаза: лево")
-    elif left_x_min + center_left[0] >= left_x_max - 0.4 * (left_x_max - left_x_min): 
-        print("Направление левого глаза: право")
+    if left_x_min + center_left[0] <= left_x_min + 0.3 * (left_x_max - left_x_min): 
+        print("Направление левого глаза по горизонтали: лево")
+    elif left_x_min + center_left[0] >= left_x_max - 0.3 * (left_x_max - left_x_min): 
+        print("Направление левого глаза по горизонтали: право")
     else:
-        print("Направление левого глаза: центр")
+        print("Направление левого глаза по горизонтали: центр")
 
+        # Для левого глаза
+    if left_y_min + center_left[1] <= left_y_min + 0.3 * (left_y_max - left_y_min):
+        print("Направление левого глаза по вертикали: вверх")
+    elif left_y_min + center_left[1] >= left_y_max - 0.3 * (left_y_max - left_y_min):
+        print("Направление левого глаза по вертикали: вниз")
+    else:
+        print("Направление левого глаза по вертикали: центр")
 
 
     # Отображение изображения с контурами 
@@ -87,11 +94,20 @@ for face in faces:
 
 
     if right_x_min + center_right[0] <= right_x_min + 0.3 * (right_x_max - right_x_min): 
-        print("Направление правого глаза: лево")
+        print("Направление правого глаза по горизонтали: лево")
     elif right_x_min + center_right[0] >= right_x_max - 0.3 * (right_x_max - right_x_min):
-        print("Направление правого глаза: право") 
+        print("Направление правого глаза по горизонтали: право") 
     else:
-        print("Направление правого глаза: центр")
+        print("Направление правого глаза по горизонтали: центр")
+
+    
+    # Для правого глаза
+    if right_y_min + center_right[1] <= right_y_min + 0.3 * (right_y_max - right_y_min):
+        print("Направление правого глаза по вертикали: вверх")
+    elif right_y_min + center_right[1] >= right_y_max - 0.3 * (right_y_max - right_y_min):
+        print("Направление правого глаза по вертикали: вниз")
+    else:
+        print("Направление правого глаза по вертикали: центр")
 
 
     for cnt_right in contours_right:

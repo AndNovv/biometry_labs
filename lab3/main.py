@@ -16,7 +16,7 @@ mp_drawing = mp.solutions.drawing_utils
 mp_holistic = mp.solutions.holistic
 
 
-def configureNewCoords(emotion):
+def configureNewCoords(emotion, file):
 
     print('Configuring ' + emotion)
     cap = cv2.VideoCapture(0)
@@ -64,7 +64,7 @@ def configureNewCoords(emotion):
     for val in range(1, num_coords + 1):
         landmarks += [f'x{val}', f'y{val}', f'z{val}', f'v{val}']
 
-    with open('coords.csv', mode='w', newline='') as f:
+    with open(file, mode='w', newline='') as f:
         csv_writer = csv.writer(f, delimiter=',', quotechar='"', quoting=csv.QUOTE_MINIMAL)
         csv_writer.writerow(landmarks)
 
@@ -111,7 +111,7 @@ def configureNewCoords(emotion):
                 row = pose_row + face_row
                 row.insert(0, class_name)
 
-                with open('coords.csv', mode='a', newline='') as f:
+                with open(file, mode='a', newline='') as f:
                     csv_writer = csv.writer(f, delimiter=',', quotechar='"', quoting=csv.QUOTE_MINIMAL)
                     csv_writer.writerow(row)
             except:
@@ -126,12 +126,12 @@ def configureNewCoords(emotion):
 
 
 def trainModel(): 
-    df_neutral = pd.read_csv("NeutralCoords.csv")
-    df_smile = pd.read_csv("SmileCoords.csv")
-    df_sad = pd.read_csv("SadCoords.csv")
+    # df_neutral = pd.read_csv(neutralCoordsFile)
+    df_smile = pd.read_csv(smileCoordsFile)
+    df_sad = pd.read_csv(sadCoordsFile)
 
     # Combine datasets
-    df = pd.concat([df_neutral, df_smile, df_sad], ignore_index=True)
+    df = pd.concat([df_smile, df_sad], ignore_index=True)
     X = df.drop('Emotion', axis=1)
     y = df['Emotion']
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_state=1234)
@@ -153,7 +153,7 @@ def trainModel():
         yhat = model.predict(X_test)
         print(algo, accuracy_score(y_test, yhat))
 
-    with open('new_detection.pkl', 'wb') as f:
+    with open('new_model.pkl', 'wb') as f:
         pickle.dump(fit_models['rf'], f)
 
 
@@ -236,10 +236,15 @@ def realTimeEmotionDetection(model):
     cap.release()
     cv2.destroyAllWindows()
 
+neutralCoordsFile = "neutralCoords.csv"
+smileCoordsFile = "smileCoords.csv"
+sadCoordsFile = "sadCoords.csv"
+
 # "NeutralFace" "SmileFace" "SadFace"  
-# configureNewCoords('SadFace')
+# configureNewCoords('NeutralFace', neutralCoordsFile)
+# configureNewCoords('SmileFace', smileCoordsFile)
+# configureNewCoords('SadFace', sadCoordsFile)
 
-trainModel()
-
-model = loadModel('new_detection.pkl')
+# trainModel()
+model = loadModel('sad-neutral.pkl')
 realTimeEmotionDetection(model)
