@@ -99,7 +99,7 @@ def findMostSimilarFingerprint(image_path, db_path='fingerprint_db.json'):
                 "match_points": match_points
             }
 
-    if best_match and best_score > 40:
+    if best_match and best_score > 10:
         print(f'Наиболее похожий отпечаток: {best_match["image_path"]}')
         print(f"Результаты сравнения отпечатков:")
 
